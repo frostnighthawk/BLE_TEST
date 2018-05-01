@@ -33,7 +33,7 @@
   }
 
   function _connect() {
-      t = 2;
+      t = 1;
       switch (t)
       {
           case 1:
@@ -166,7 +166,7 @@
               document.querySelector('#toggle').onclick = _toggle;
               break
           case 2:
-              document.querySelector('#alertLevelChange').classList.add("disabled");
+              document.querySelector('#alertLevelChange').disabled = false;
               document.querySelector('#alertLevelChange').classList.remove("btn-primary");
               document.querySelector('#alertLevelChange').onclick = _alertLevelChange;
               break
