@@ -18,9 +18,9 @@
 
   var bluetoothDevice = null;
   var connected = false;
-  var ledValue;
   var myCharacteristic;
-  var alertLevelCharacteristic;
+  var myValue;
+  var t;
 
   function log(v)
   {
@@ -33,51 +33,61 @@
   }
 
   function _connect() {
-    document.querySelector('#log').textContent = '';
-    log('Requesting any Bluetooth Device...');
-    navigator.bluetooth.requestDevice({
-     // filters: [...] <- Prefer filters to save energy & show relevant devices.
-        acceptAllDevices: true,
-        optionalServices: [_serv_uuid_1],
-        optionalServices: [_serv_uuid_2]
-        })
-    .then(device => {
-      log('Connecting to GATT Server...');
-      bluetoothDevice = device;
-      bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
-      return device.gatt.connect();
-    })
-    .then(server => {
-      log('Getting Service...');
-      return server.getPrimaryService(_serv_uuid_1);
-      return server.getPrimaryService(_serv_uuid_2);
-    })
-    .then(service => {
-      log('Getting Characteristic...');
-      return service.getCharacteristic(_char_uuid_1);
-      return service.getCharacteristic(_char_uuid_2);
-    })
-    .then(characteristic => {
-      log('Reading Characteristic values...');
-      myCharacteristic = characteristic;
-      return characteristic.readValue();
-    })
-    .then(value => {
-      log('Value is ' + value.getUint8(0));
-      connected = true;
-      ledValue = value.getUint8(0);
-      _update();
-    })
-    .catch(error => {
-      if (bluetoothDevice && bluetoothDevice.gatt.connected) {
-        bluetoothDevice.gatt.disconnect();
-      }
-      bluetoothDevice = null;
-      connected = false;
-      log("Error:", error); 
-      _update();
-    });
+      switch (t)
+      {
+          case 1:
+              _serv_uuid = _serv_uuid_1;
+              _char_uuid = _char_uuid_1;
+              break;
 
+          case 2:
+              _serv_uuid = _serv_uuid_2;
+              _char_uuid = _char_uuid_2;
+              break;
+          default:
+      }
+      document.querySelector('#log').textContent = '';
+      log('Requesting any Bluetooth Device...');
+      navigator.bluetooth.requestDevice({
+          // filters: [...] <- Prefer filters to save energy & show relevant devices.
+          acceptAllDevices: true,
+          optionalServices: [_serv_uuid]
+      })
+      .then(device => {
+          log('Connecting to GATT Server...');
+          bluetoothDevice = device;
+          bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+          return device.gatt.connect();
+      })
+      .then(server => {
+          log('Getting Service...');
+          return server.getPrimaryService(_serv_uuid);
+      })
+      .then(service => {
+          log('Getting Characteristic...');
+          return service.getCharacteristic(_char_uuid);
+      })
+      .then(characteristic => {
+          log('Reading Characteristic values...');
+          myCharacteristic = characteristic;
+          return characteristic.readValue();
+      })
+      .then(value => {
+          log('Value is ' + value.getUint8(0));
+          connected = true;
+          myValue = value.getUint8(0);
+          _update();
+      })
+      .catch(error => {
+          if (bluetoothDevice && bluetoothDevice.gatt.connected) {
+              bluetoothDevice.gatt.disconnect();
+          }
+          bluetoothDevice = null;
+          connected = false;
+          log("Error:", error);
+          _update();
+      });
+      
   }
 
   function onDisconnected(event) {
@@ -102,34 +112,33 @@
   }
 
   function _toggle() {
-    if(!connected)
+    if(!myCharacteristic)
       return;
 
-    ledValue = ledValue == 0 ? 1 : 0;
+    myValue = myValue == 0 ? 1 : 0;
     // Writing 1 is the signal to reset energy expended.
-    var v = Uint8Array.of(ledValue);
+    var v = Uint8Array.of(myValue);
     myCharacteristic.writeValue(v)
     .then(_ => {
-      log('toggle done, new value is ' + ledValue);
+      log('toggle done, new value is ' + myValue);
     })
     .catch(error => { 
       log(error); 
     });
   }
 
-  function _alertChange() {
-      if (!connected)
+  function alertLevelChange() {
+      if (!myCharacteristic) {
           return;
-
-      ledValue = ledValue == 0 ? 1 : 0;
-      // Writing 1 is the signal to reset energy expended.
-      var v = Uint8Array.of(ledValue);
-      myCharacteristic.writeValue(v)
+      }
+      log('Setting Alert Level...');
+      let value = Uint8Array.of(document.querySelector('#alertLevelValue').value);
+      alertLevelCharacteristic.writeValue(value)
       .then(_ => {
-          log('toggle done, new value is ' + ledValue);
+          log('> Alert Level changed to: ' + getAlertLevel(new DataView(value.buffer)));
       })
       .catch(error => {
-          log(error);
+          log('Argh! ' + error);
       });
   }
 
@@ -138,8 +147,6 @@
     if(!navigator.bluetooth) {
       document.querySelector('#state').innerText = "Not supported!";
       document.querySelector('#hint').innerText = "Hint: Web Bluetooth API is not available on current browser";
-      document.querySelector('#connect').classList.add("disabled");
-      document.querySelector('#toggle').classList.add("disabled");
       return;
     }
 
@@ -150,12 +157,20 @@
       document.querySelector('#connect').classList.remove("btn-primary");
       document.querySelector('#state').innerText = "Connected";
       document.querySelector('#hint').innerText = "Hint: Press Toggle to switch on/off of LED on LinkIt 7697";
-      document.querySelector('#toggle').classList.remove("disabled");
-      document.querySelector('#toggle').classList.add("btn-primary");
-      document.querySelector('#toggle').onclick = _toggle;
-      document.querySelector('#alert_change').classList.add("disabled");
-      document.querySelector('#alert_change').classList.remove("btn-primary");
-      document.querySelector('#alert_change').onclick = _alertChange;
+      switch (t)
+      {
+          case 1:
+              document.querySelector('#toggle').disabled = false;
+              document.querySelector('#toggle').classList.add("btn-primary");
+              document.querySelector('#toggle').onclick = _toggle;
+              break
+          case 2:
+              document.querySelector('#alertLevelChange').classList.add("disabled");
+              document.querySelector('#alertLevelChange').classList.remove("btn-primary");
+              document.querySelector('#alertLevelChange').onclick = _alertLevelChange;
+              break
+          default:
+      }
     }
     else
     {
@@ -164,10 +179,17 @@
       document.querySelector('#connect').classList.add("btn-primary");
       document.querySelector('#state').innerText = "Disconnected";
       document.querySelector('#hint').innerText = "Hint: Press Connect to connect to LinkIt 7697";
-      document.querySelector('#toggle').classList.add("disabled");
-      document.querySelector('#toggle').classList.remove("btn-primary");
-      document.querySelector('#alert_change').classList.add("disabled");
-      document.querySelector('#alert_change').classList.remove("btn-primary");
+      switch (t) {
+          case 1:
+              document.querySelector('#toggle').disabled = true;
+              document.querySelector('#toggle').classList.remove("btn-primary");
+              break
+          case 2:
+              document.querySelector('#alertLevelChange').disabled = true;
+              document.querySelector('#alertLevelChange').classList.remove("btn-primary");
+              break
+          default:
+      }
     }
   }
 
@@ -181,13 +203,19 @@
     <h2>LinkIt 7697<br>Web BLE demo</h2>
   </div>
   <div class="row">
-    <div class="col-sm-3">
-      <button id='connect' type="button" class="btn btn-block">Connect</button>
-      <br>
-      <button id='toggle' type="button" class="btn btn-block">Toggle</button>
-      <br>
-      <botton id='alert_change' typeof="button" class="btn btn-block">Alert_Change</botton>
-    </div>
+      <div class="col-sm-3">
+          <button id='connect' type="button" class="btn btn-block">Connect</button>
+          <br>
+          <button id='toggle' type="button" class="btn btn-block" disabled>Toggle</button>
+          <br>
+          <select id="alertLevelValue">
+              <option selected disabled hidden>Choose...</option>
+              <option value="0x00">0x00 (No Alert)</option>
+              <option value="0x01">0x01 (Mild Alert)</option>
+              <option value="0x02">0x02 (High Alert)</option>
+          </select>
+          <button id="alertLevelChange" type="button" class="btn btn-block" disabled>Set Alert Level</button>
+      </div>
     <div class="col-sm-9">
       <h4 id='state'></h4>
       <div id='hint'></div>
