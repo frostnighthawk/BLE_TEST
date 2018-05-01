@@ -20,6 +20,7 @@
   var connected = false;
   var ledValue;
   var myCharacteristic;
+  var alertLevelCharacteristic;
 
   function log(v)
   {
@@ -49,10 +50,12 @@
     .then(server => {
       log('Getting Service...');
       return server.getPrimaryService(_serv_uuid_1);
+      return server.getPrimaryService(_serv_uuid_2);
     })
     .then(service => {
       log('Getting Characteristic...');
       return service.getCharacteristic(_char_uuid_1);
+      return service.getCharacteristic(_char_uuid_2);
     })
     .then(characteristic => {
       log('Reading Characteristic values...');
@@ -114,7 +117,21 @@
     });
   }
 
-  
+  function _alertChange() {
+      if (!connected)
+          return;
+
+      ledValue = ledValue == 0 ? 1 : 0;
+      // Writing 1 is the signal to reset energy expended.
+      var v = Uint8Array.of(ledValue);
+      myCharacteristic.writeValue(v)
+      .then(_ => {
+          log('toggle done, new value is ' + ledValue);
+      })
+      .catch(error => {
+          log(error);
+      });
+  }
 
   function _update()
   {
@@ -136,6 +153,9 @@
       document.querySelector('#toggle').classList.remove("disabled");
       document.querySelector('#toggle').classList.add("btn-primary");
       document.querySelector('#toggle').onclick = _toggle;
+      document.querySelector('#alert_change').classList.add("disabled");
+      document.querySelector('#alert_change').classList.remove("btn-primary");
+      document.querySelector('#alert_change').onclick = _alertChange;
     }
     else
     {
@@ -146,6 +166,8 @@
       document.querySelector('#hint').innerText = "Hint: Press Connect to connect to LinkIt 7697";
       document.querySelector('#toggle').classList.add("disabled");
       document.querySelector('#toggle').classList.remove("btn-primary");
+      document.querySelector('#alert_change').classList.add("disabled");
+      document.querySelector('#alert_change').classList.remove("btn-primary");
     }
   }
 
@@ -164,7 +186,7 @@
       <br>
       <button id='toggle' type="button" class="btn btn-block">Toggle</button>
       <br>
-      <botton id='alert_change' typeof="button" class="btn-block">Alert_Change</botton>
+      <botton id='alert_change' typeof="button" class="btn btn-block">Alert_Change</botton>
     </div>
     <div class="col-sm-9">
       <h4 id='state'></h4>
