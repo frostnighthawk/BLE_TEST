@@ -133,10 +133,10 @@
           return;
       }
       log('Setting Alert Level...');
-      let value = Uint8Array.of(document.querySelector('#alertLevelValue').value);
-      alertLevelCharacteristic.writeValue(value)
+      var v = Uint8Array.of(document.querySelector('#alertLevelValue').value);
+      myCharacteristic.writeValue(v)
       .then(_ => {
-          log('> Alert Level changed to: ' + getAlertLevel(new DataView(value.buffer)));
+          log('> Alert Level changed to: ' + getAlertLevel(new DataView(v.buffer)));
       })
       .catch(error => {
           log('Argh! ' + error);
