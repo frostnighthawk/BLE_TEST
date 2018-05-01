@@ -136,7 +136,7 @@
       var v = Uint8Array.of(document.querySelector('#alertLevelValue').value);
       myCharacteristic.writeValue(v)
       .then(_ => {
-          log('> Alert Level changed to: ' + v);
+          log('> Alert Level changed to: ' + document.querySelector('#alertLevelValue').value);
       })
       .catch(error => {
           log('Argh! ' + error);
