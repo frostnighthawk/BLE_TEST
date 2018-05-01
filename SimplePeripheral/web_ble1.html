@@ -136,7 +136,7 @@
       var v = Uint8Array.of(document.querySelector('#alertLevelValue').value);
       myCharacteristic.writeValue(v)
       .then(_ => {
-          log('> Alert Level changed to: ' + getAlertLevel(new DataView(v.buffer)));
+          log('> Alert Level changed to: ' + v);
       })
       .catch(error => {
           log('Argh! ' + error);
@@ -211,9 +211,9 @@
           <br>
           <select id="alertLevelValue">
               <option selected disabled hidden>Choose...</option>
-              <option value="0x00">0x00 (No Alert)</option>
-              <option value="0x01">0x01 (Mild Alert)</option>
-              <option value="0x02">0x02 (High Alert)</option>
+              <option value="0">No Alert</option>
+              <option value="1">Mild Alert</option>
+              <option value="2">High Alert</option>
           </select>
           <button id="alertLevelChange" type="button" class="btn btn-block" disabled>Set Alert Level</button>
       </div>
