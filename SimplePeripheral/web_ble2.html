@@ -1,26 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Linkit 7697 Web BLE</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>Linkit 7697 Web BLE</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-  <script>
+    <script>
+      
+        var _serv_uuid_1 = '19B10010-E8F2-537E-4F6C-D104768A1214'.toLowerCase();  //ledService
+        var _char_uuid_1 = '19B10011-E8F2-537E-4F6C-D104768A1214'.toLowerCase();  //switchCharacteristic
 
-      var _serv_uuid_1 = '19B10010-E8F2-537E-4F6C-D104768A1214'.toLowerCase();
-      var _char_uuid_1 = '19B10011-E8F2-537E-4F6C-D104768A1214'.toLowerCase();
+        var _serv_uuid_2 = 'e7c15b94-5e72-424a-8a04-259d9f159a57'.toLowerCase();  //linkLossService
+        var _char_uuid_2 = 'e7c15b95-5e72-424a-8a04-259d9f159a57'.toLowerCase();  //alertLevelCharacteristic
 
-      var _serv_uuid_2 = 'e7c15b94-5e72-424a-8a04-259d9f159a57'.toLowerCase();
-      var _char_uuid_2 = 'e7c15b95-5e72-424a-8a04-259d9f159a57'.toLowerCase();
-
-  var bluetoothDevice = null;
-  var connected = false;
-  var myCharacteristic;
-  var myValue;
-  var t;
+        var bluetoothDevice = null;
+        var connected = false;
+        var myCharacteristic;
+        var myValue;
+        var tmp;
 
   function log(v)
   {
@@ -33,8 +33,9 @@
   }
 
   function _connect() {
-      t = 2;
-      switch (t)
+
+      tmp = document.querySelector('#serviceValue').value;
+      switch (tmp)
       {
           case 1:
               _serv_uuid = _serv_uuid_1;
@@ -141,58 +142,54 @@
       .catch(error => {
           log('Argh! ' + error);
       });
-  }
-
-  function _update()
-  {
-    if(!navigator.bluetooth) {
-      document.querySelector('#state').innerText = "Not supported!";
-      document.querySelector('#hint').innerText = "Hint: Web Bluetooth API is not available on current browser";
-      return;
     }
 
-    if(connected)
-    {
-      document.querySelector('#connect').onclick = _disconnect;
-      document.querySelector('#connect').innerText = "Disconnect";
-      document.querySelector('#connect').classList.remove("btn-primary");
-      document.querySelector('#state').innerText = "Connected";
-      document.querySelector('#hint').innerText = "Hint: Press Toggle to switch on/off of LED on LinkIt 7697";
-      switch (t)
-      {
-          case 1:
-              document.querySelector('#toggle').disabled = false;
-              document.querySelector('#toggle').classList.add("btn-primary");
-              document.querySelector('#toggle').onclick = _toggle;
-              break
-          case 2:
-              document.querySelector('#alertLevelChange').disabled = false;
-              document.querySelector('#alertLevelChange').classList.remove("btn-primary");
-              document.querySelector('#alertLevelChange').onclick = _alertLevelChange;
-              break
-          default:
-      }
+    function _update() {
+        if(!navigator.bluetooth) {
+            document.querySelector('#state').innerText = "Not supported!";
+            document.querySelector('#hint').innerText = "Hint: Web Bluetooth API is not available on current browser";
+            return;
+        }
+
+        if (connected) {
+            document.querySelector('#connect').onclick = _disconnect;
+            document.querySelector('#connect').innerText = "Disconnect";
+            document.querySelector('#connect').classList.remove("btn-primary");
+            document.querySelector('#state').innerText = "Connected";
+            document.querySelector('#hint').innerText = "Hint: Press Toggle to switch on/off of LED on LinkIt 7697";
+            switch (tmp) {
+                case 1:
+                    document.querySelector('#toggle').disabled = false;
+                    document.querySelector('#toggle').classList.add("btn-primary");
+                    document.querySelector('#toggle').onclick = _toggle;
+                    break
+                case 2:
+                    document.querySelector('#alertLevelChange').disabled = false;
+                    document.querySelector('#alertLevelChange').classList.add("btn-primary");
+                    document.querySelector('#alertLevelChange').onclick = _alertLevelChange;
+                    break
+                default:
+            }
+        }
+        else {
+            document.querySelector('#connect').onclick = _connect;
+            document.querySelector('#connect').innerText = "Connect";
+            document.querySelector('#connect').classList.add("btn-primary");
+            document.querySelector('#state').innerText = "Disconnected";
+            document.querySelector('#hint').innerText = "Hint: Press Connect to connect to LinkIt 7697";         
+            switch (tmp) {
+                case 1:
+                    document.querySelector('#toggle').disabled = true;
+                    document.querySelector('#toggle').classList.remove("btn-primary");
+                    break
+                case 2:
+                    document.querySelector('#alertLevelChange').disabled = true;
+                    document.querySelector('#alertLevelChange').classList.remove("btn-primary");
+                    break
+                default:
+            }
+        }
     }
-    else
-    {
-      document.querySelector('#connect').onclick = _connect;
-      document.querySelector('#connect').innerText = "Connect";
-      document.querySelector('#connect').classList.add("btn-primary");
-      document.querySelector('#state').innerText = "Disconnected";
-      document.querySelector('#hint').innerText = "Hint: Press Connect to connect to LinkIt 7697";
-      switch (t) {
-          case 1:
-              document.querySelector('#toggle').disabled = true;
-              document.querySelector('#toggle').classList.remove("btn-primary");
-              break
-          case 2:
-              document.querySelector('#alertLevelChange').disabled = true;
-              document.querySelector('#alertLevelChange').classList.remove("btn-primary");
-              break
-          default:
-      }
-    }
-  }
 
   </script>
 
@@ -205,17 +202,23 @@
   </div>
   <div class="row">
       <div class="col-sm-3">
+          <select id="serviceValue">
+              <option selected disabled hidden>Choose service</option>
+              <option value="1">led</option>
+              <option value="2">linkLoss</option>
+          </select>
+          <br>
           <button id='connect' type="button" class="btn btn-block">Connect</button>
           <br>
           <button id='toggle' type="button" class="btn btn-block" disabled>Toggle</button>
           <br>
-          <select id="alertLevelValue">
+          <select id="alertLevelValue" disabled>
               <option selected disabled hidden>Choose...</option>
               <option value="0">No Alert</option>
               <option value="1">Mild Alert</option>
               <option value="2">High Alert</option>
           </select>
-          <button id="alertLevelChange" type="button" class="btn btn-block" disabled>Set Alert Level</button>
+          <button id="alertLevelChange" type="button" class="btn btn-block" disabled>Set alert level</button>
       </div>
     <div class="col-sm-9">
       <h4 id='state'></h4>
