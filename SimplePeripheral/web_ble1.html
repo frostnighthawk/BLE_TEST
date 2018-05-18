@@ -33,7 +33,8 @@
   }
 
   function _connect() {
-      t = 1;
+      t = document.querySelector('#serviceValue').value;
+      //t = 1;
       switch (t)
       {
           case 1:
@@ -205,6 +206,11 @@
   </div>
   <div class="row">
       <div class="col-sm-3">
+          <select id="serviceValue">
+              <option selected disabled hidden>Choose service</option>
+              <option value="1">led</option>
+              <option value="2">linkLoss</option>
+          </select>
           <button id='connect' type="button" class="btn btn-block">Connect</button>
           <br>
           <button id='toggle' type="button" class="btn btn-block" disabled>Toggle</button>
