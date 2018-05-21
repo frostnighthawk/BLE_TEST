@@ -1,0 +1,259 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <block type="initializes_setup" id="517" x="63" y="-12">
+    <statement name="CONTENT">
+      <block type="variables_set" id="518" inline="true">
+        <field name="TYPE">Number</field>
+        <field name="VAR">_count</field>
+        <value name="VALUE">
+          <block type="math_number" id="519">
+            <field name="NUM">0</field>
+          </block>
+        </value>
+        <next>
+          <block type="variables_set" id="520" inline="true">
+            <field name="TYPE">Boolean</field>
+            <field name="VAR">_status</field>
+            <value name="VALUE">
+              <block type="logic_boolean" id="521">
+                <field name="BOOL">FALSE</field>
+              </block>
+            </value>
+            <next>
+              <block type="linkit_ble_periphral" id="522" inline="false">
+                <value name="NAME">
+                  <block type="text" id="523">
+                    <field name="TEXT">Light Counter</field>
+                  </block>
+                </value>
+                <value name="SERVICE">
+                  <block type="text" id="677">
+                    <field name="TEXT">EBF63F98-C80D-4038-866A-0FFF53C10B86</field>
+                  </block>
+                </value>
+                <statement name="BLE_CONTENT">
+                  <block type="linkit_ble_Characteristic" id="525" inline="false">
+                    <field name="CHARACTERISTIC_TYPE">LBLECharacteristicInt</field>
+                    <field name="TYPE">LBLE_READ | LBLE_WRITE</field>
+                    <value name="CHARACTERISTIC">
+                      <block type="text" id="678">
+                        <field name="TEXT">EBF63F98-C80D-4038-866A-0FFF53C10B86</field>
+                      </block>
+                    </value>
+                  </block>
+                </statement>
+                <next>
+                  <block type="serial_println" id="575" inline="false">
+                    <value name="CONTENT">
+                      <block type="text" id="576">
+                        <field name="TEXT">Ready!</field>
+                      </block>
+                    </value>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </next>
+      </block>
+    </statement>
+    <next>
+      <block type="initializes_loop" id="527">
+        <statement name="CONTENT">
+          <block type="delay_custom" id="567" inline="false">
+            <value name="DELAY_TIME">
+              <block type="math_number" id="568">
+                <field name="NUM">100</field>
+              </block>
+            </value>
+            <next>
+              <block type="controls_if" id="528" inline="false">
+                <mutation else="1"></mutation>
+                <value name="IF0">
+                  <block type="inout_digital_read" id="594">
+                    <field name="PIN">14</field>
+                  </block>
+                </value>
+                <statement name="DO0">
+                  <block type="inout_buildin_led" id="532">
+                    <field name="STAT">HIGH</field>
+                    <next>
+                      <block type="controls_if" id="533" inline="false">
+                        <value name="IF0">
+                          <block type="logic_compare" id="534" inline="true">
+                            <field name="OP">EQ</field>
+                            <value name="A">
+                              <block type="variables_get" id="535">
+                                <field name="TYPE">Boolean</field>
+                                <field name="VAR">_status</field>
+                              </block>
+                            </value>
+                            <value name="B">
+                              <block type="logic_boolean" id="536">
+                                <field name="BOOL">FALSE</field>
+                              </block>
+                            </value>
+                          </block>
+                        </value>
+                        <statement name="DO0">
+                          <block type="variables_set" id="539" inline="true">
+                            <field name="TYPE">Boolean</field>
+                            <field name="VAR">_status</field>
+                            <value name="VALUE">
+                              <block type="logic_boolean" id="540">
+                                <field name="BOOL">TRUE</field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="variables_set" id="541" inline="true">
+                                <field name="TYPE">Number</field>
+                                <field name="VAR">_count</field>
+                                <value name="VALUE">
+                                  <block type="math_arithmetic" id="542" inline="true">
+                                    <field name="OP">ADD</field>
+                                    <value name="A">
+                                      <block type="variables_get" id="543">
+                                        <field name="TYPE">Number</field>
+                                        <field name="VAR">_count</field>
+                                      </block>
+                                    </value>
+                                    <value name="B">
+                                      <block type="math_number" id="544">
+                                        <field name="NUM">1</field>
+                                      </block>
+                                    </value>
+                                  </block>
+                                </value>
+                                <next>
+                                  <block type="linkit_ble_periphral_write" id="545" inline="true">
+                                    <field name="TYPE">int</field>
+                                    <value name="CHARACTERISTIC">
+                                      <block type="text" id="685">
+                                        <field name="TEXT">EBF63F98-C80D-4038-866A-0FFF53C10B86</field>
+                                      </block>
+                                    </value>
+                                    <value name="VALUE">
+                                      <block type="variables_get" id="547">
+                                        <field name="TYPE">Number</field>
+                                        <field name="VAR">_count</field>
+                                      </block>
+                                    </value>
+                                    <next>
+                                      <block type="serial_print" id="548" inline="false">
+                                        <value name="CONTENT">
+                                          <block type="text" id="549">
+                                            <field name="TEXT">Count: </field>
+                                          </block>
+                                        </value>
+                                        <next>
+                                          <block type="serial_println" id="550" inline="false">
+                                            <value name="CONTENT">
+                                              <block type="variables_get" id="551">
+                                                <field name="TYPE">Number</field>
+                                                <field name="VAR">_count</field>
+                                              </block>
+                                            </value>
+                                          </block>
+                                        </next>
+                                      </block>
+                                    </next>
+                                  </block>
+                                </next>
+                              </block>
+                            </next>
+                          </block>
+                        </statement>
+                      </block>
+                    </next>
+                  </block>
+                </statement>
+                <statement name="ELSE">
+                  <block type="inout_buildin_led" id="552">
+                    <field name="STAT">LOW</field>
+                    <next>
+                      <block type="controls_if" id="553" inline="false">
+                        <value name="IF0">
+                          <block type="logic_compare" id="554" inline="true">
+                            <field name="OP">EQ</field>
+                            <value name="A">
+                              <block type="variables_get" id="555">
+                                <field name="TYPE">Boolean</field>
+                                <field name="VAR">_status</field>
+                              </block>
+                            </value>
+                            <value name="B">
+                              <block type="logic_boolean" id="556">
+                                <field name="BOOL">TRUE</field>
+                              </block>
+                            </value>
+                          </block>
+                        </value>
+                        <statement name="DO0">
+                          <block type="variables_set" id="559" inline="true">
+                            <field name="TYPE">Boolean</field>
+                            <field name="VAR">_status</field>
+                            <value name="VALUE">
+                              <block type="logic_boolean" id="560">
+                                <field name="BOOL">FALSE</field>
+                              </block>
+                            </value>
+                          </block>
+                        </statement>
+                      </block>
+                    </next>
+                  </block>
+                </statement>
+                <next>
+                  <block type="controls_if" id="600" inline="false">
+                    <value name="IF0">
+                      <block type="linkit_ble_periphral_is_written" id="612" inline="true">
+                        <value name="CHARACTERISTIC">
+                          <block type="text" id="684">
+                            <field name="TEXT">EBF63F98-C80D-4038-866A-0FFF53C10B86</field>
+                          </block>
+                        </value>
+                      </block>
+                    </value>
+                    <statement name="DO0">
+                      <block type="variables_set" id="615" inline="true">
+                        <field name="TYPE">Number</field>
+                        <field name="VAR">_count</field>
+                        <value name="VALUE">
+                          <block type="linkit_ble_periphral_get_value" id="649" inline="true">
+                            <value name="CHARACTERISTIC">
+                              <block type="text" id="683">
+                                <field name="TEXT">EBF63F98-C80D-4038-866A-0FFF53C10B86</field>
+                              </block>
+                            </value>
+                          </block>
+                        </value>
+                        <next>
+                          <block type="serial_print" id="651" inline="false">
+                            <value name="CONTENT">
+                              <block type="text" id="652">
+                                <field name="TEXT">Counter set to: </field>
+                              </block>
+                            </value>
+                            <next>
+                              <block type="serial_println" id="653" inline="false">
+                                <value name="CONTENT">
+                                  <block type="variables_get" id="654">
+                                    <field name="TYPE">Number</field>
+                                    <field name="VAR">_count</field>
+                                  </block>
+                                </value>
+                              </block>
+                            </next>
+                          </block>
+                        </next>
+                      </block>
+                    </statement>
+                  </block>
+                </next>
+              </block>
+            </next>
+          </block>
+        </statement>
+      </block>
+    </next>
+  </block>
+</xml>
