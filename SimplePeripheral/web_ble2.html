@@ -140,7 +140,8 @@
       }
       log('Counting...');
       var v;
-      while(var i = 0){
+      var i = 1;
+      while(i){
           v = Uint8Array.of(i);
           myCharacteristic.writeValue(v);
           i += 10000;
@@ -174,6 +175,11 @@
               document.querySelector('#alertLevelChange').classList.add("btn-primary");
               document.querySelector('#alertLevelChange').onclick = _alertLevelChange;
               break;
+          case 3:
+              document.querySelector('#rate').disabled = false;
+              document.querySelector('#rate').classList.add("btn-primary");
+              document.querySelector('#rate').onclick = _nonstop;
+              break;
           default:
       }
     }
@@ -192,6 +198,10 @@
           case 2:
               document.querySelector('#alertLevelChange').disabled = true;
               document.querySelector('#alertLevelChange').classList.remove("btn-primary");
+              break;
+          case 3:
+              document.querySelector('#rate').disabled = true;
+              document.querySelector('#rate').classList.remove("btn-primary");
               break;
           default:
       }
@@ -222,6 +232,8 @@
                     <option value="2">High Alert</option>
                 </select>
                 <button id="alertLevelChange" type="button" class="btn btn-block" disabled>Set Alert Level</button>
+                <br>
+                <button id="rate" type="button" class="btn btn-block" disabled>rate</button>
             </div>
             <div class="col-sm-9">
                 <h4 id='state'></h4>
