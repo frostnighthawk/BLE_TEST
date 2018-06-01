@@ -19,6 +19,7 @@
   var myCharacteristic;
   var myValue;
   var t;
+  var i = 1;
   function log(v)
   {
     var line = Array.prototype.slice.call(arguments).map(function(argument) {
@@ -140,11 +141,9 @@
       }
       log('Counting...');
       var v;
-      var i = 1;
       while(i){
-          v = Uint8Array.of(i);
+          v = Uint8Array.of(i++);
           myCharacteristic.writeValue(v);
-          i += 10000;
       }
   }
       
