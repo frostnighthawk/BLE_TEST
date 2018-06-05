@@ -14,6 +14,8 @@
       var _char_uuid_2 = 'e7c15b95-5e72-424a-8a04-259d9f159a57'.toLowerCase();
       var _serv_uuid_3 = 'e7c15b96-5e72-424a-8a04-259d9f159a57'.toLowerCase();
       var _char_uuid_3 = 'e7c15b97-5e72-424a-8a04-259d9f159a57'.toLowerCase();
+      var _serv_uuid_4 = 'e7c15b98-5e72-424a-8a04-259d9f159a57'.toLowerCase();
+      var _char_uuid_4 = 'e7c15b99-5e72-424a-8a04-259d9f159a57'.toLowerCase();
   var bluetoothDevice = null;
   var connected = false;
   var myCharacteristic;
@@ -43,6 +45,10 @@
           case 3:
               _serv_uuid = _serv_uuid_3;
               _char_uuid = _char_uuid_3;
+              break;
+          case 4:
+              _serv_uuid = _serv_uuid_4;
+              _char_uuid = _char_uuid_4;
               break;
           default:
       }
@@ -149,6 +155,23 @@
           log('Argh! ' + error);
       });
   }
+  function _pressure(){
+      if (!myCharacteristic) {
+          return;
+      }
+      log('Counting...');
+      while(true) {
+          var v = 1;
+          myCharacteristic.writeValue(v)
+          .then(_ => {
+              log('> adding...');
+          })
+          .catch(error => {
+              log('Argh! ' + error);
+          });
+          delay(1000);
+      }
+  }
       
       
   function _update()
@@ -182,6 +205,11 @@
               document.querySelector('#enter').classList.add("btn-primary");
               document.querySelector('#enter').onclick = _enter;
               break;
+          case 4:
+              document.querySelector('#pressure').disabled = false;
+              document.querySelector('#pressure').classList.add("btn-primary");
+              document.querySelector('#pressure').onclick = _pressure;
+              break;
           default:
       }
     }
@@ -205,6 +233,10 @@
               document.querySelector('#enter').disabled = true;
               document.querySelector('#enter').classList.remove("btn-primary");
               break;
+          case 4:
+              document.querySelector('#pressure').disabled = true;
+              document.querySelector('#pressure').classList.remove("btn-primary");
+              break;
           default:
       }
     }
@@ -222,6 +254,7 @@
                     <option value="1">led</option>
                     <option value="2">linkLoss</option>
                     <option value="3">enter</option>
+                    <option value="4">pressure</option>
                 </select>
                 <button id='connect' type="button" class="btn btn-block">Connect</button>
                 <br>
@@ -235,11 +268,13 @@
                 </select>
                 <button id="alertLevelChange" type="button" class="btn btn-block" disabled>Set Alert Level</button>
                 <br>
-                <button id="enter" type="button" class="btn btn-block" disabled>rate</button>
+                <button id="enter" type="button" class="btn btn-block" disabled>enter</button>
                 <br>
                 <input id="bar" type="text" value="type"   
                        onfocus="if(value=='enter') {value=''}"   
                        onblur="if(value=='') {value='enter'}"/>  
+                <br>
+                <button id="pressure" type="button" class="btn btn-block" disabled>pressure</button>
             </div>
             <div class="col-sm-9">
                 <h4 id='state'></h4>
