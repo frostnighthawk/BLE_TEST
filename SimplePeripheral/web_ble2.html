@@ -135,15 +135,15 @@
           log('Argh! ' + error);
       });
   }
-  function _nonstop(){
+  function _enter(){
       if (!myCharacteristic) {
           return;
       }
       log('Counting...');
-      var v = Uint8Array.of(document.querySelector('#some').value);
+      var v = Uint8Array.of(document.querySelector('#enter').value);
       myCharacteristic.writeValue(v)
       .then(_ => {
-          log('> Text: ' + document.querySelector('#some').value);
+          log('> Text: ' + document.querySelector('#enter').value);
       })
       .catch(error => {
           log('Argh! ' + error);
@@ -178,9 +178,9 @@
               document.querySelector('#alertLevelChange').onclick = _alertLevelChange;
               break;
           case 3:
-              document.querySelector('#rate').disabled = false;
-              document.querySelector('#rate').classList.add("btn-primary");
-              document.querySelector('#rate').onclick = _nonstop;
+              document.querySelector('#enter').disabled = false;
+              document.querySelector('#enter').classList.add("btn-primary");
+              document.querySelector('#enter').onclick = _enter;
               break;
           default:
       }
@@ -202,8 +202,8 @@
               document.querySelector('#alertLevelChange').classList.remove("btn-primary");
               break;
           case 3:
-              document.querySelector('#rate').disabled = true;
-              document.querySelector('#rate').classList.remove("btn-primary");
+              document.querySelector('#enter').disabled = true;
+              document.querySelector('#enter').classList.remove("btn-primary");
               break;
           default:
       }
@@ -235,10 +235,10 @@
                 </select>
                 <button id="alertLevelChange" type="button" class="btn btn-block" disabled>Set Alert Level</button>
                 <br>
-                <button id="rate" type="button" class="btn btn-block" disabled>rate</button>
-                <input id="some" type="text" value="type"   
-                       onfocus="if(value=='type') {value=''}"   
-                       onblur="if(value=='') {value='type'}"/>  
+                <button id="enter" type="button" class="btn btn-block" disabled>rate</button>
+                <input id="bar" type="text" value="type"   
+                       onfocus="if(value=='enter') {value=''}"   
+                       onblur="if(value=='') {value='enter'}"/>  
             </div>
             <div class="col-sm-9">
                 <h4 id='state'></h4>
