@@ -146,10 +146,10 @@
           return;
       }
       log('Counting...');
-      var v = Uint8Array.of(document.querySelector('#enter').value);
+      var v = Uint8Array.of(document.querySelector('#bar').value);
       myCharacteristic.writeValue(v)
       .then(_ => {
-          log('> Text: ' + document.querySelector('#enter').value);
+          log('> Text: ' + document.querySelector('#bar').value);
       })
       .catch(error => {
           log('Argh! ' + error);
