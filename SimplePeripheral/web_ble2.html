@@ -161,8 +161,8 @@
       }
       var v;
       var i = 10;
-      while(i) {
-          v = Uint8Array.of(i--);
+      while(true) {
+          v = Uint8Array.of(i++);
           myCharacteristic.writeValue(v);
           delay(1000);
       }
