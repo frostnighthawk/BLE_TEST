@@ -161,7 +161,7 @@
       }
       log('Counting...');
       while(true) {
-          var v = 1;
+          var v = Uint8Array.of(1);
           myCharacteristic.writeValue(v)
           .then(_ => {
               log('> adding...');
@@ -272,6 +272,7 @@
                 <input id="bar" type="text" value="type"   
                        onfocus="if(value=='enter') {value=''}"   
                        onblur="if(value=='') {value='enter'}"/>  
+                <br>
                 <br>
                 <button id="pressure" type="button" class="btn btn-block" disabled>pressure</button>
             </div>
